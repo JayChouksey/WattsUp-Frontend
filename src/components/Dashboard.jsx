@@ -93,10 +93,14 @@ function Dashboard({ chartData = {} }) {
   const [tipIndex, setTipIndex] = useState(0);
 
   const energyTips = [
-    "Your AC is running at peak efficiency when set to 24°C instead of 18°C. This small change can save up to 15% on cooling costs.",
-    "The geyser used 20% more energy this week. Try reducing bath time by 2 minutes to save water and electricity.",
-    "We noticed your fridge consumes more at night. Avoid frequent opening during peak hours (6-10 PM) to optimize energy use.",
-  ];
+    "AC at 18°C? Bro, it's not Antarctica. Try 24°C and save some 💸 (and your hoodie).",
+    "Your geyser's been doing overtime. Shorter showers = more power to your power bill. 🚿⚡",
+    "Your fridge called. It said 'stop opening me every 5 mins at night!' – Try chilling, not chilling your snacks. 😅",
+    "Using the microwave to reheat tea 3 times a day? Might be time for a thermal flask, chef. ☕️💡",
+    "Your lights are on more than your phone screen. Mood lighting ≠ all lighting. Try switching off when not needed! 🔦😎",
+    "Laundry party every day? Let's go for a full load next time and give the machine a break. 🧺🎉",
+    "Fan on full speed, but you're not even in the room? That fan's not your fan anymore. 🪭👻",
+  ];  
 
   // Function to handle navigation
   const navigateTo = (path) => {
@@ -416,30 +420,30 @@ function Dashboard({ chartData = {} }) {
           <div className="space-y-6">
             {/* AI Energy Tips */}
             <div className="bg-white p-5 rounded-2xl shadow">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
-                <Lightbulb size={20} className="text-emerald-500 mr-2" />
-                AI-Generated Tips
-              </h2>
-              <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-4 rounded-xl">
-                <div className="font-medium text-emerald-700 mb-2 flex items-center">
-                  <Zap size={16} className="mr-1" />
-                  Personalized Energy Insight
-                </div>
-                <p className="text-gray-700">{energyTips[tipIndex]}</p>
-              </div>
-              <div className="flex justify-center mt-3">
-                <div className="flex space-x-1">
-                  {energyTips.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        i === tipIndex ? "bg-emerald-500" : "bg-gray-300"
-                      }`}
-                    ></div>
-                  ))}
-                </div>
-              </div>
-            </div>
+      <h2 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
+        <Lightbulb size={20} className="text-emerald-500 mr-2" />
+        Watt Saver Tips
+      </h2>
+      <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-4 rounded-xl">
+        <div className="font-medium text-emerald-700 mb-2 flex items-center">
+          <Zap size={16} className="mr-1" />
+          Personalized Energy Insight
+        </div>
+        <p className="text-gray-700">{energyTips[tipIndex]}</p>
+      </div>
+      <div className="flex justify-center mt-3">
+        <div className="flex space-x-1">
+          {energyTips.map((_, i) => (
+            <div
+              key={i}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                i === tipIndex ? "bg-emerald-500" : "bg-gray-300"
+              }`}
+            ></div>
+          ))}
+        </div>
+      </div>
+    </div>
 
             {/* Wastage Alerts */}
             <div className="bg-white p-5 rounded-2xl shadow">
