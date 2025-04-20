@@ -17,6 +17,9 @@ import {
   Award,
   LogOut,
 } from "lucide-react";
+import ElectricityBarChart from "./BarChart";
+import HourlyUsageLineChart from "./LineChart";
+import AreaChartComponent from "./AreaChart";
 
 // Mock data for charts
 const mockEnergyData = {
@@ -88,6 +91,14 @@ const mockEnergyData = {
   },
 };
 
+const gradientClasses = [
+  "bg-gradient-to-r from-green-100 to-green-200 text-green-800",
+  "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800",
+  "bg-gradient-to-r from-pink-100 to-pink-200 text-pink-800",
+  "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800",
+  "bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800",
+];
+
 function Dashboard({ chartData = {} }) {
   const [timeRange, setTimeRange] = useState("daily");
   const [tipIndex, setTipIndex] = useState(0);
@@ -126,6 +137,17 @@ function Dashboard({ chartData = {} }) {
     ((previousUsage - currentUsage) / previousUsage) *
     100
   ).toFixed(1);
+
+  const totalEnergyUsed = chartData?.room_consumption.usage.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
+
+  const estimatedBillUsageAverageOverHundredDays =
+    chartData?.daily_summary?.daily_cost.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0
+    );
 
   const totalRoomCosumption = chartData?.room_consumption?.usage.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
@@ -218,7 +240,9 @@ function Dashboard({ chartData = {} }) {
           <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm">Total Energy Used</p>
-              <h3 className="text-2xl font-bold text-gray-800">116.2 kWh</h3>
+              <h3 className="text-2xl font-bold text-gray-800">
+                {(totalEnergyUsed / 100).toFixed(2)} kWh
+              </h3>
               <div className="flex items-center text-emerald-600 mt-1">
                 <ArrowDown size={16} className="mr-1" />
                 <span>{savingPercentage}% vs last week</span>
@@ -232,7 +256,9 @@ function Dashboard({ chartData = {} }) {
           <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm">Estimated Bill</p>
-              <h3 className="text-2xl font-bold text-gray-800">₹1,845</h3>
+              <h3 className="text-2xl font-bold text-gray-800">
+                ₹{(estimatedBillUsageAverageOverHundredDays / 100).toFixed(2)}
+              </h3>
               <div className="flex items-center text-emerald-600 mt-1">
                 <ArrowDown size={16} className="mr-1" />
                 <span>₹230 saved so far</span>
@@ -243,7 +269,7 @@ function Dashboard({ chartData = {} }) {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
+          {/* <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm">Energy Efficiency Score</p>
               <h3 className="text-2xl font-bold text-gray-800">82/100</h3>
@@ -255,6 +281,28 @@ function Dashboard({ chartData = {} }) {
             <div className="bg-purple-100 p-3 rounded-xl">
               <Trophy size={28} className="text-purple-600" />
             </div>
+          </div> */}
+          <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
+            <div>
+              <div className="flex items-center text-emerald-600 font-medium">
+                <ArrowUp size={18} className="mr-2" />
+                <span className="text-gray-700">Most Used Appliances</span>
+              </div>
+
+              <div className="flex gap-2 mt-4 flex-wrap">
+                {chartData &&
+                  chartData?.top_appliances.appliances?.map((appliance, i) => (
+                    <span
+                      key={i}
+                      className={`text-sm font-medium px-4 py-1.5 rounded-full shadow-sm ${
+                        gradientClasses[i % gradientClasses.length]
+                      }`}
+                    >
+                      {appliance}: {chartData?.top_appliances?.usage[i]} kWh
+                    </span>
+                  ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -264,51 +312,35 @@ function Dashboard({ chartData = {} }) {
           <div className="lg:col-span-2 space-y-6">
             {/* Energy Consumption Chart */}
             <div className="bg-white p-5 rounded-2xl shadow">
-              <div className="flex justify-between items-center mb-4">
+              <div>
                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                  <BarChart3 size={20} className="text-emerald-500 mr-2" />
-                  Energy Consumption
+                  Usage Summary
                 </h2>
-                <div className="text-sm text-gray-500">
-                  {timeRange === "daily" ? "Today, April 18" : "April 12-18"}
-                </div>
-              </div>
-              <div className="h-72 w-full">
-                {/* Energy consumption chart visualization */}
-                <div className="bg-gray-50 h-full rounded-lg flex items-end px-4 py-2 space-x-4">
-                  {timeRange === "daily"
-                    ? mockEnergyData.daily.map((hour, i) => (
-                        <div
-                          key={i}
-                          className="flex flex-col items-center flex-1"
-                        >
-                          <div
-                            className="w-full bg-emerald-500 rounded-t-lg transition-all duration-500"
-                            style={{ height: `${hour.usage * 10}%` }}
-                          ></div>
-                          <span className="text-xs mt-2 text-gray-600">
-                            {hour.time}
-                          </span>
-                        </div>
-                      ))
-                    : mockEnergyData.weekly.map((day, i) => (
-                        <div
-                          key={i}
-                          className="flex flex-col items-center flex-1"
-                        >
-                          <div
-                            className="w-full bg-blue-500 rounded-t-lg transition-all duration-500"
-                            style={{ height: `${day.usage * 3}%` }}
-                          ></div>
-                          <span className="text-xs mt-2 text-gray-600">
-                            {day.day}
-                          </span>
-                        </div>
-                      ))}
-                </div>
+                {chartData?.daily_summary && (
+                  <ElectricityBarChart rawData={chartData?.daily_summary} />
+                )}
               </div>
             </div>
-
+            <div className="bg-white p-5 rounded-2xl shadow">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+                  Hour Wise Energy Spike
+                </h2>
+                {chartData?.daily_summary && (
+                  <HourlyUsageLineChart rawData={chartData?.time_of_day} />
+                )}
+              </div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl shadow">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+                  Daily Hourly Energy Consumption Patterns for the Month
+                </h2>
+                {chartData?.daily_summary && (
+                  <AreaChartComponent rawData={chartData?.heatmap} />
+                )}
+              </div>
+            </div>
             {/* Room-wise & Device Usage */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Room-wise Usage */}
