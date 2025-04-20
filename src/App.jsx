@@ -12,8 +12,10 @@ import DetailedReports from "./components/DetailedReport";
 import AdvanceEnergySettings from "./components/AdvanceEnergySettings";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
+
 function App() {
   const [chartData, setChartData] = useState(null);
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
 
   useEffect(() => {
     axios
@@ -23,6 +25,23 @@ function App() {
         console.log(res.data, "This is the data!!");
       })
       .catch((err) => console.error("Error loading charts", err));
+  }, []);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+          console.log("Current Location:", latitude, longitude);
+        },
+        (error) => {
+          console.error("Error fetching location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
   }, []);
 
   console.log(chartData, "This is the chart data!!");
@@ -37,7 +56,7 @@ function App() {
         />
         <Route path="/profile" element={<Profile />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup" element={<SignUp location={location} />} />
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/tips" element={<Tips />} />
         <Route path="/detailed-report" element={<DetailedReports />} />
